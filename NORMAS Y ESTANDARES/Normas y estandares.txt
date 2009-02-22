@@ -1,0 +1,7 @@
+RACK o BASTIDOR
+- EIA 310-D
+- IEC 60297
+- DIN 41494 SC48D.
+
+MicoATX
+- microATX Motherboard Interface Specification (INTEL)
