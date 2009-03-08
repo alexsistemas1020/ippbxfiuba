@@ -1,0 +1,84 @@
+1 - Instalacion de Sistema Base estandar - Version: Debian 5.0 LENNY (ultima!!)
+
+
+2 - Instalacion de herramientas para compilacion
+
+	# apt-get update
+	# apt-get install gcc
+	# apt-get install libstdc++6-4.3-dev
+	# apt-get install make
+	# apt-get install linux-headers-`uname -r`
+	# apt-get install build-essential
+	# apt-get install openssh-server
+	# apt-get install g++
+	# apt-get install apache2.2-common
+
+Opcional: Instalacion de las vmware-tools
+
+	2.1 - Descomentar del archivo /etc/ssh/sshd_config la siguiente linea:
+
+		#ListenAddress 0.0.0.0
+
+	2.2 - Reiniciar el servicio de ssh
+
+	#/etc/init.d/ssh restart
+
+
+
+3 - Instalacion de paquete especial TERMCAP (desde el /tmp)
+
+	# wget ftp://ftp.gnu.org/gnu/termcap/termcap-1.3.1.tar.gz
+	# tar xvfz termcap-1.3.1.tar.gz
+	# cd termcap-1.3.1
+	# ./configure
+	# make
+	# make install
+		
+
+4 - Descarga de asterisk y zaptel (desde el /tmp)
+
+	# wget http://downloads.digium.com/pub/asterisk/releases/asterisk-1.4.21.tar.gz  (la asterisk-1.4.23 no compila)
+ 
+	# wget http://downloads.digium.com/pub/zaptel/releases/zaptel-1.4.12.tar.gz
+
+	# tar xvfz asterisk-1.4.23.tar.gz
+	# tar xvfz zaptel-1.4.12.tar.gz
+
+	# wget http://downloads.digium.com/pub/asterisk/releases/asterisk-addons-1.6.0.1.tar.gz
+	# wget http://downloads.digium.com/pub/asterisk/releases/asterisk-sounds-1.2.1.tar.gz
+
+	# tar xvfz asterisk-addons-1.6.0.1.tar.gz
+	# tar xvfz asterisk-sounds-1.2.1.tar.gz
+
+
+5 - Compilar zaptel y asterisk
+
+	# cd /tmp/zaptel-1.4.12
+	# make clean
+	# make
+	# make install
+	# make config
+
+	# cd /tmp/asterisk-1.4.23
+	# make clean
+	# ./configure
+	# make
+	# make install
+	# make samples
+	
+
+6 - Iniciar asterisk
+
+	# asterisk
+
+	Para ingresar a la consola:
+	
+	# asterisk -rvvv
+
+
+
+
+
+
+
+
