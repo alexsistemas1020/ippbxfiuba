@@ -1,18 +1,41 @@
-1 - Instalacion de Sistema Base estandar - Version: Debian 5.0 LENNY (ultima!!)
+1 - Instalacion de Sistema Base estandar - Version: Debian 5.0 LENNY
 
 
 2 - Instalacion de herramientas para compilacion
 
+    Reemplazar fuentes en /etc/apt-sources.list por:
+
+	deb http://ftp.de.debian.org/debian lenny main
+
+    Instalar:	
+
 	# apt-get update
 	# apt-get install gcc
-	# apt-get install libstdc++6-4.3-dev
 	# apt-get install make
 	# apt-get install linux-headers-`uname -r`
 	# apt-get install build-essential
-	# apt-get install openssh-server
-	# apt-get install g++
-	# apt-get install apache2.2-common
-
+	# apt-get install apt-get install libnewt-dev
+	# apt-get install libusb-dev
+	# apt-get install libncurses5-dev
+	# apt-get install libssl-dev
+	# apt-get install apache2
+	# apt-get install mysql-server
+	# apt-get install mysql-client
+	# apt-get install libxml2-dev
+	# apt-get install libtiff4
+	# apt-get install libtiff4-dev
+	# apt-get install glame
+	# apt-get install php-pear
+	# apt-get install php5
+	# apt-get install php5-mysql
+	# apt-get install php5-gd
+	# perl -MCPAN -e "install Net::Telnet"
+	# apt-get install bison
+	# apt-get install libaudiofile-dev
+	# apt-get install curl
+	# apt-get install sox
+	
+	
 Opcional: Instalacion de las vmware-tools
 
 	2.1 - Descomentar del archivo /etc/ssh/sshd_config la siguiente linea:
@@ -25,41 +48,22 @@ Opcional: Instalacion de las vmware-tools
 
 
 
-3 - Instalacion de paquete especial TERMCAP (desde el /tmp)
+3 - Descarga, compilacion e instalacion de zaptel (desde el /tmp)
 
-	# wget ftp://ftp.gnu.org/gnu/termcap/termcap-1.3.1.tar.gz
-	# tar xvfz termcap-1.3.1.tar.gz
-	# cd termcap-1.3.1
+	# wget http://downloads.digium.com/pub/zaptel/releases/zaptel-1.4.12.tar.gz
+	# tar xvfz zaptel-1.4.12.tar.gz
+	# cd /tmp/zaptel-1.4.12
 	# ./configure
 	# make
 	# make install
-		
-
-4 - Descarga de asterisk y zaptel (desde el /tmp)
+	# make config
+	
+	
+4 - Descarga, compilacion e instalacion de asterisk (desde el /tmp)
 
 	# wget http://downloads.digium.com/pub/asterisk/releases/asterisk-1.4.21.tar.gz  (la asterisk-1.4.23 no compila)
- 
-	# wget http://downloads.digium.com/pub/zaptel/releases/zaptel-1.4.12.tar.gz
-
-	# tar xvfz asterisk-1.4.23.tar.gz
-	# tar xvfz zaptel-1.4.12.tar.gz
-
-	# wget http://downloads.digium.com/pub/asterisk/releases/asterisk-addons-1.6.0.1.tar.gz
-	# wget http://downloads.digium.com/pub/asterisk/releases/asterisk-sounds-1.2.1.tar.gz
-
-	# tar xvfz asterisk-addons-1.6.0.1.tar.gz
-	# tar xvfz asterisk-sounds-1.2.1.tar.gz
-
-
-5 - Compilar zaptel y asterisk
-
-	# cd /tmp/zaptel-1.4.12
-	# make clean
-	# make
-	# make install
-	# make config
-
-	# cd /tmp/asterisk-1.4.23
+	# tar xvfz asterisk-1.4.21.tar.gz
+	# cd /tmp/asterisk-1.4.21
 	# make clean
 	# ./configure
 	# make
@@ -67,18 +71,44 @@ Opcional: Instalacion de las vmware-tools
 	# make samples
 	
 
-6 - Iniciar asterisk
+5- Compilar e instalar FREEPBX, asterisk-addons y asterisk-sounds
 
-	# asterisk
-
-	Para ingresar a la consola:
+	# wget http://easynews.dl.sourceforge.net/sourceforge/amportal/freepbx-2.5.1.tar.gz
+	# tar xvfz freepbx-2.5.1.tar.gz
+	# cd /tmp/freepbx-2.5.1.tar.gz
 	
-	# asterisk -rvvv
+	# groupadd asterisk
+	# useradd -c "asterisk PBX" -d /var/lib/asterisk -g asterisk asterisk
+	
+	# wget http://downloads.digium.com/pub/asterisk/releases/asterisk-addons-1.4.7.tar.gz
+	# tar xvfz asterisk-addons-1.4.7.tar.gz
+	# cd /tmp/asterisk-addons-1.4.7
+	# perl -p -i.bak -e 's/CFLAGS.*D_GNU_SOURCE/CFLAGS+=-D_GNU_SOURCE\nCFLAGS+=-DMYSQL_LOGUNIQUEID/' Makefile
+	# make clean
+	# ./configure
+	# make
+	# make install
+	# make samples
 
+	# wget http://downloads.digium.com/pub/asterisk/releases/asterisk-sounds-1.2.1.tar.gz
+	# tar xvfz asterisk-sounds-1.2.1.tar.gz
+	# cd /tmp/asterisk-sounds-1.2.1
+	# make install	
 
+	# /etc/init.d/mysql start
+	# mysqladmin create asteriskcdrdb -p
+	# mysql --user=root --password=root asteriskcdrdb < /asterisk-repos/freepbx-2.5.1/SQL/cdr_mysql_table.sql
+	# mysqladmin create asterisk -p
+	# mysql --user root -p asterisk < /asterisk-repos/freepbx-2.5.1/SQL/newinstall.sql
+	# mysql --user root -p
+	mysql> GRANT ALL PRIVILEGES ON asteriskcdrdb.* TO pbxfiuba@localhost IDENTIFIED BY 'amp109';
+	mysql> GRANT ALL PRIVILEGES ON asterisk.* TO pbxfiuba@localhost IDENTIFIED BY 'amp109';
+	mysql> quit
 
-
-
-
+	# pear install DB
+	# ./install_amp
+	
+	
+	
 
 
