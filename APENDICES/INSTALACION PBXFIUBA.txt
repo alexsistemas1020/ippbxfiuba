@@ -34,6 +34,9 @@
 	# apt-get install libaudiofile-dev
 	# apt-get install curl
 	# apt-get install sox
+	# ####################apt-get install flex	(para el php4)
+	# apt-get install php-db
+	# pear install DB
 	
 	
 Opcional: Instalacion de las vmware-tools
@@ -48,22 +51,25 @@ Opcional: Instalacion de las vmware-tools
 
 
 
-3 - Descarga, compilacion e instalacion de zaptel (desde el /tmp)
+3 - Descarga, compilacion e instalacion de zaptel (desde el /asterisk-repos)
 
+	# mkdir /asterisk-repos
+	# cd /asterisk-repos
 	# wget http://downloads.digium.com/pub/zaptel/releases/zaptel-1.4.12.tar.gz
 	# tar xvfz zaptel-1.4.12.tar.gz
-	# cd /tmp/zaptel-1.4.12
+	# cd zaptel-1.4.12
 	# ./configure
 	# make
 	# make install
 	# make config
 	
 	
-4 - Descarga, compilacion e instalacion de asterisk (desde el /tmp)
+4 - Descarga, compilacion e instalacion de asterisk (desde el /asterisk-repos)
 
-	# wget http://downloads.digium.com/pub/asterisk/releases/asterisk-1.4.21.tar.gz  (la asterisk-1.4.23 no compila)
-	# tar xvfz asterisk-1.4.21.tar.gz
-	# cd /tmp/asterisk-1.4.21
+	# cd /asterisk-repos
+	# wget http://downloads.digium.com/pub/asterisk/releases/asterisk-1.4.23.tar.gz
+	# tar xvfz asterisk-1.4.23.tar.gz
+	# cd asterisk-1.4.21
 	# make clean
 	# ./configure
 	# make
@@ -73,40 +79,149 @@ Opcional: Instalacion de las vmware-tools
 
 5- Compilar e instalar FREEPBX, asterisk-addons y asterisk-sounds
 
-	# wget http://easynews.dl.sourceforge.net/sourceforge/amportal/freepbx-2.5.1.tar.gz
-	# tar xvfz freepbx-2.5.1.tar.gz
-	# cd /tmp/freepbx-2.5.1.tar.gz
+	Detener el demonio asterisk
+
+	# kill -9 `pidof asterisk`
+
+	5.1- Editar php.ini
+
+		5.1.1- Configurar php.ini de apache para que acepte archivos de 40 mb (la musica en espera la subiremos por la web)
+
+			# vi /etc/php5/apache2/php.ini
+
+				Buscaremos la linea que pone:
 	
-	# groupadd asterisk
-	# useradd -c "asterisk PBX" -d /var/lib/asterisk -g asterisk asterisk
+				; Maximum allowed size for uploaded files.
+				upload_max_filesize = 2M
 	
-	# wget http://downloads.digium.com/pub/asterisk/releases/asterisk-addons-1.4.7.tar.gz
-	# tar xvfz asterisk-addons-1.4.7.tar.gz
-	# cd /tmp/asterisk-addons-1.4.7
-	# perl -p -i.bak -e 's/CFLAGS.*D_GNU_SOURCE/CFLAGS+=-D_GNU_SOURCE\nCFLAGS+=-DMYSQL_LOGUNIQUEID/' Makefile
-	# make clean
-	# ./configure
-	# make
-	# make install
-	# make samples
+				y cambiaremos el valor 2 Megas por 40M
+		
+		5.1.2- Asegurarse que la linea:
+	
+				extension=mysql.so
+	
+			Esta descomentada (quitar el punto y coma)
 
-	# wget http://downloads.digium.com/pub/asterisk/releases/asterisk-sounds-1.2.1.tar.gz
-	# tar xvfz asterisk-sounds-1.2.1.tar.gz
-	# cd /tmp/asterisk-sounds-1.2.1
-	# make install	
+		5.1.3- Buscar la variable "register_globals" y ponerla en "On"
 
-	# /etc/init.d/mysql start
-	# mysqladmin create asteriskcdrdb -p
-	# mysql --user=root --password=root asteriskcdrdb < /asterisk-repos/freepbx-2.5.1/SQL/cdr_mysql_table.sql
-	# mysqladmin create asterisk -p
-	# mysql --user root -p asterisk < /asterisk-repos/freepbx-2.5.1/SQL/newinstall.sql
-	# mysql --user root -p
-	mysql> GRANT ALL PRIVILEGES ON asteriskcdrdb.* TO pbxfiuba@localhost IDENTIFIED BY 'amp109';
-	mysql> GRANT ALL PRIVILEGES ON asterisk.* TO pbxfiuba@localhost IDENTIFIED BY 'amp109';
-	mysql> quit
 
-	# pear install DB
-	# ./install_amp
+	5.2- Configuracion de usuario y grupo asterisk
+
+		# groupadd asterisk
+		# useradd -c "PBXFIUBA" -d /var/lib/asterisk -g asterisk asterisk	
+
+
+	5.3- Editar el archivo asterisk.conf
+
+		# mkdir /var/run/asterisk
+		# vi /etc/asterisk/asterisk.conf		
+
+		Cambiar la linea que dice:
+		
+			astrundir => /var/run
+
+		Por:
+
+			astrundir => /var/run/asterisk
+
+
+	5.4- Instalar asterisk-addons (desde asterisk-repos)
+
+		# cd /asterisk-repos
+		# wget http://downloads.digium.com/pub/asterisk/releases/asterisk-addons-1.4.7.tar.gz
+		# tar xvfz asterisk-addons-1.4.7.tar.gz
+		# cd /asterisk-repos/asterisk-addons-1.4.7
+		# perl -p -i.bak -e 's/CFLAGS.*D_GNU_SOURCE/CFLAGS+=-D_GNU_SOURCE\nCFLAGS+=-DMYSQL_LOGUNIQUEID/' Makefile
+		# make clean
+		# ./configure
+		# make
+		# make install
+		# make samples
+
+	5.5- Instalar asterisk-sounds (desde asterisk-repos)
+
+		# cd /asterisk-repos
+		# wget http://downloads.digium.com/pub/asterisk/releases/asterisk-sounds-1.2.1.tar.gz
+		# tar xvfz asterisk-sounds-1.2.1.tar.gz
+		# cd /asterisk-repos/asterisk-sounds-1.2.1
+		# make install
+		
+	5.6- Configurar permisos en sql
+
+		# cd /asterisk-repos
+		# wget http://easynews.dl.sourceforge.net/sourceforge/amportal/freepbx-2.5.1.tar.gz
+		# tar xvfz freepbx-2.5.1.tar.gz
+		# /etc/init.d/mysql start
+		# mysqladmin create asteriskcdrdb -p
+		# mysql --user=root --password=root asteriskcdrdb < /asterisk-repos/freepbx-2.5.1/SQL/cdr_mysql_table.sql
+		# mysqladmin create asterisk -p
+		# mysql --user root -p asterisk < /asterisk-repos/freepbx-2.5.1/SQL/newinstall.sql
+		# mysql --user root -p
+		mysql> GRANT ALL PRIVILEGES ON asteriskcdrdb.* TO pbxfiuba@localhost IDENTIFIED BY 'amp109';
+		mysql> GRANT ALL PRIVILEGES ON asterisk.* TO pbxfiuba@localhost IDENTIFIED BY 'amp109';
+		mysql> quit
+
+
+	5.7- Configurar apache
+
+		# vi /etc/apache2/apache2.conf
+
+		Buscar las siguientes dos lineas:
+
+			User ------
+			Group ------
+
+		Y modificarlas por:
+
+			User asterisk
+			Group asterisk
+	
+		# /etc/init.d/apache2 restart
+
+	
+	5.8- Instalar FreePBX
+
+		# asterisk
+		# cd /asterisk-repos/freepbx-2.5.1
+		# ./install_amp
+
+		Dejar las opcionas que presenta por defecto.
+
+		Otorgar permisos:
+
+		# chmod 777 -R /var/lib/asterisk/bin
+		# chmod 777 /etc/amportal.conf
+		
+		Si no instala ejecutar: 
+		
+		# ./install_amp --username=root --password=root
+
+		Para levantar "todo":
+
+		# amportal start
+		
+	5.9- Ultimas correcciones para la interfaz web
+
+		# cd /var/lib/asterisk
+		# mv moh mohmp3
+
+		# cd /var/www/html
+		# cp -p -r panel /var/www
+
+
+	
+	
+	
+
+		
+
+	
+
+	
+	
+
+	
+	
 	
 	
 	
