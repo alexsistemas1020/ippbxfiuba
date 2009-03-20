@@ -34,7 +34,6 @@
 	# apt-get install libaudiofile-dev
 	# apt-get install curl
 	# apt-get install sox
-	# ####################apt-get install flex	(para el php4)
 	# apt-get install php-db
 	# pear install DB
 	
@@ -111,7 +110,7 @@ Opcional: Instalacion de las vmware-tools
 		# useradd -c "PBXFIUBA" -d /var/lib/asterisk -g asterisk asterisk	
 
 
-	5.3- Editar el archivo asterisk.conf
+	5.3- Editar el archivo asterisk.conf 
 
 		# mkdir /var/run/asterisk
 		# vi /etc/asterisk/asterisk.conf		
@@ -124,7 +123,7 @@ Opcional: Instalacion de las vmware-tools
 
 			astrundir => /var/run/asterisk
 
-
+		
 	5.4- Instalar asterisk-addons (desde asterisk-repos)
 
 		# cd /asterisk-repos
@@ -180,6 +179,20 @@ Opcional: Instalacion de las vmware-tools
 
 	
 	5.8- Instalar FreePBX
+		
+		Editar /etc/asterisk/sip.conf
+
+		# vi /etc/asterisk/sip.conf
+
+		Descomentar las siguientes lineas:
+
+			include sip_general_additional.conf
+			include sip_general_custom.conf
+			include sip_registrations_custom.conf
+			include sip_registrations.conf
+			include sip_custom_post.conf
+
+		Levantar asterisk e instalar AMPORTAL:
 
 		# asterisk
 		# cd /asterisk-repos/freepbx-2.5.1
@@ -196,10 +209,19 @@ Opcional: Instalacion de las vmware-tools
 		
 		# ./install_amp --username=root --password=root
 
-		Para levantar "todo":
+		Configurar /etc/amportal.conf
 
-		# amportal start
-		
+		# vi /etc/amportal.conf
+
+		Buscar la lìnea:
+
+			AUTHTYPE=none
+
+		Y reemplazarla por:
+
+			AUTHTYPE=database
+
+				
 	5.9- Ultimas correcciones para la interfaz web
 
 		# cd /var/lib/asterisk
@@ -207,6 +229,16 @@ Opcional: Instalacion de las vmware-tools
 
 		# cd /var/www/html
 		# cp -p -r panel /var/www
+
+		
+		Levantar el motor con:
+
+		# amportal start
+
+
+		Para conectarse a la interfaz:
+
+		http://direccion_ip/html
 
 
 	
