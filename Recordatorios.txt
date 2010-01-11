@@ -4,4 +4,5 @@
 - Terminar Glosario de terminos
 - Terminar normas tecnicas
 - Terminar normas legales
-- 
+- Descargar hoja de datos de equipos de la competencia
+- Terminar apendice de calidad de VOIP
