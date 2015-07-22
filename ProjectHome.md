@@ -1,0 +1,1 @@
+Proyecto para migrar la vieja pbx de la FIUBA hacia una moderna IP-PBX basada en un sistema Open Source que corre sobre un sistema operativo Linux.
